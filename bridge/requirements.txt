@@ -1,0 +1,4 @@
+fastapi==0.135.1
+uvicorn[standard]==0.41.0
+pyatv==0.17.0
+segno==1.6.6

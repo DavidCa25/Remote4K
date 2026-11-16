@@ -1,0 +1,63 @@
+# Compila el APK de Android y lo publica en GitHub Releases como "remote4k.apk".
+#
+# Se ejecuta al subir un tag v* (git tag v1.0.0 && git push origin v1.0.0)
+# o a mano desde la pestaña Actions → "Android APK" → Run workflow.
+#
+# El bridge descarga siempre la última versión desde
+# https://github.com/<usuario>/<repo>/releases/latest/download/remote4k.apk
+name: Android APK
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Generar proyecto Android
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - name: Compilar APK (release)
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a,x86_64
+
+      - name: Preparar archivo
+        run: cp android/app/build/outputs/apk/release/app-release.apk remote4k.apk
+
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
+          name: ${{ github.ref_type == 'tag' && format('Remote4K {0}', github.ref_name) || format('Remote4K build {0}', github.run_number) }}
+          make_latest: true
+          files: remote4k.apk
+          body: |
+            APK de Remote4K para Android.
+            Instálalo escaneando el QR del bridge (`/install`) o descargando `remote4k.apk`.

@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+# Credenciales de emparejamiento del Apple TV: nunca al repo
+remote4k_storage.json
+downloads/*.apk
