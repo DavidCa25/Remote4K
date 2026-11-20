@@ -11,14 +11,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.private.remote4k",
+      "bundleIdentifier": "com.remote4k.app",
       "infoPlist": {
         "NSAppTransportSecurity": { "NSAllowsLocalNetworking": true, "NSAllowsArbitraryLoads": true },
         "NSLocalNetworkUsageDescription": "Remote4K se conecta al bridge de tu red local para controlar el Apple TV."
       }
     },
     "android": {
-      "package": "com.private.remote4k",
+      "package": "com.remote4k.app",
       "adaptiveIcon": {
         "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
